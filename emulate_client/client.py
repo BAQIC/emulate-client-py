@@ -1,7 +1,6 @@
 import click
 import requests
 
-
 def qasmsim_agent(agent_ip, file, shots, qubits, task_mode):
     with open(file) as f:
         content = f.read()
