@@ -1,5 +1,7 @@
 import click
+import yaml
 from .client import EmulateClient
+
 
 @click.command()
 @click.option(
@@ -10,6 +12,12 @@ from .client import EmulateClient
     ),
     required=True,
     help="The mode of the emulate client",
+)
+@click.option(
+    "--config",
+    type=str,
+    default="",
+    help="The configuration file path",
 )
 @click.option(
     "--agent-ip",
@@ -56,14 +64,28 @@ from .client import EmulateClient
     default="sequence",
     help="The mode of the task",
 )
-def main(mode, agent_ip, file, shots, qubits, capacity, position, task_mode):
-    client = EmulateClient(agent_ip)
+def main(mode, config, agent_ip, file, shots, qubits, capacity, position, task_mode):
 
-    if mode == "QasmSimAgent":
-        client.qasmsim_agent(file, shots, qubits, task_mode)
-    elif mode == "UpdateQasmSimAgent":
-        client.update_qasmsim_agent(agent_ip, qubits, capacity)
-    elif mode == "GetQasmSimAgent":
-        client.get_qasmsim_agent(agent_ip, position)
+    if "" != config:
+        with open(config) as f:
+            config = yaml.load(f, Loader=yaml.FullLoader)
+            client = EmulateClient(config["agent_ip"])
+            if mode == "QasmSimAgent":
+                client.qasmsim_agent(**config)
+            elif mode == "UpdateQasmSimAgent":
+                client.update_qasmsim_agent(**config)
+            elif mode == "GetQasmSimAgent":
+                client.get_qasmsim_agent(**config)
+            else:
+                raise ValueError("Invalid mode")
+
     else:
-        raise ValueError("Invalid mode")
+        client = EmulateClient(agent_ip)
+        if mode == "QasmSimAgent":
+            client.qasmsim_agent(file, shots, qubits, task_mode)
+        elif mode == "UpdateQasmSimAgent":
+            client.update_qasmsim_agent(agent_ip, qubits, capacity)
+        elif mode == "GetQasmSimAgent":
+            client.get_qasmsim_agent(agent_ip, position)
+        else:
+            raise ValueError("Invalid mode")

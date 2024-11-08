@@ -1,10 +1,11 @@
 import requests
 
+
 class EmulateClient:
     def __init__(self, agent_ip):
         self.agent_ip = agent_ip
 
-    def qasmsim_agent(self, file, shots, qubits, task_mode):
+    def qasmsim_agent(self, file, shots, qubits, task_mode, **kwargs):
         with open(file) as f:
             content = f.read()
         payload = {
@@ -17,7 +18,7 @@ class EmulateClient:
         r = requests.post(f"http://{self.agent_ip}/submit", data=payload)
         print(r.json())
 
-    def update_qasmsim_agent(self, qubits, capacity):
+    def update_qasmsim_agent(self, qubits, capacity, **kwargs):
         payload = {}
         if qubits != 0:
             payload["qubits"] = qubits
@@ -26,7 +27,7 @@ class EmulateClient:
         r = requests.post(f"http://{self.agent_ip}/update", data=payload)
         print(r.json())
 
-    def get_qasmsim_agent(self, position):
+    def get_qasmsim_agent(self, position, **kwargs):
         payload = {"pos": position}
         r = requests.get(f"http://{self.agent_ip}/get_measure", params=payload)
         print(r.json())
