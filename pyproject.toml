@@ -18,4 +18,4 @@ build-backend = "hatchling.build"
 packages = ["emulate_client"]
 
 [project.scripts]
-client = "emulate_client:client"
+client = "emulate_client.main:main"
